@@ -93,6 +93,9 @@ case "$FILE" in
 *.ogg)
 	BPM=`vorbiscomment "$FILE" | sed -n 's/^BPM=//p'`
 	;;
+*.m4a)
+	BPM=`mp4info "$FILE" | sed -n 's/^\s*BPM://p'`
+	;;
 *)
 	echo "$FILE: file extension not known" >&2
 	exit 1
@@ -128,6 +131,9 @@ case "$FILE" in
 	;;
 *.ogg)
 	vorbiscomment -at "BPM=$BPM" "$FILE"
+	;;
+*.m4a)
+	mp4tags -tempo "$BPM" "$FILE"
 	;;
 *)
 	echo "$FILE: don't know how to tag this type of file" >&2
