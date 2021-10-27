@@ -33,9 +33,10 @@
 #define UPPER 146.0
 
 #define BLOCK 4096
-#define INTERVAL 128
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof(*(x)))
+
+int INTERVAL = 128;
 
 /*
  * Sample from the metered energy
@@ -178,9 +179,10 @@ void usage(FILE *f)
 		"  -f         Print format for final BPM value (default \"%%0.1f\")\n"
 		"  -m <f>     Minimum detected BPM (default %0.0f)\n"
 		"  -x <f>     Maximum detected BPM (default %0.0f)\n"
+		"  -i <i>     Scanning interval in millis (default %d)\n"
 		"  -v         Print progress information to stderr\n"
 		"  -h         Display this help message and exit\n\n",
-		LOWER, UPPER);
+		LOWER, UPPER, INTERVAL);
 
 	fprintf(f, "Incoming audio is raw audio on stdin at %dHz, mono, 32-bit float; eg.\n"
 		"  $ sox file.mp3 -t raw -r %d -e float -c 1 - | ./" NAME "\n\n",
@@ -204,7 +206,7 @@ int main(int argc, char *argv[])
 	for (;;) {
 		int c;
 
-		c = getopt(argc, argv, "vf:g:e:m:x:h");
+		c = getopt(argc, argv, "vf:g:e:m:x:i:h");
 		if (c == -1)
 			break;
 
@@ -235,6 +237,10 @@ int main(int argc, char *argv[])
 
 		case 'x':
 			max = atof(optarg);
+			break;
+
+		case 'i':
+			INTERVAL = atoi(optarg);
 			break;
 
 		case 'h':
